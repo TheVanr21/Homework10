@@ -1,7 +1,10 @@
-package ru.netology;
+package ru.netology.manager;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
+import ru.netology.domain.Movie;
+import ru.netology.repository.MoviesRepository;
 
 public class MoviesManagerTest {
 
@@ -18,8 +21,11 @@ public class MoviesManagerTest {
     Movie movie11 = new Movie(11, "Kill Bill: Vol. 1", 2003);
     Movie movie12 = new Movie(12, "The Bourne Identity", 2002);
 
-    MoviesManager affiche = new MoviesManager();
-    MoviesManager affiche2 = new MoviesManager(5);
+    MoviesRepository moviesRepository = new MoviesRepository();
+    MoviesManager affiche = new MoviesManager(moviesRepository);
+    MoviesManager affiche2 = new MoviesManager(moviesRepository, 5);
+    MoviesRepository mockRepository = Mockito.mock(MoviesRepository.class);
+    MoviesManager affiche4 = new MoviesManager(mockRepository, 3);
 
 
     @Test
@@ -112,12 +118,23 @@ public class MoviesManagerTest {
 
     @Test
     public void shouldNotSetNegativeLimit() {
-        MoviesManager affiche3 = new MoviesManager(-1);
+        MoviesManager affiche3 = new MoviesManager(moviesRepository, -1);
 
         int expected = 10;
         int actual = affiche3.getLimit();
 
         Assertions.assertEquals(expected, actual);
+    }
+
+    @Test
+    public void mockShouldFindLast() {
+        Movie[] mockMovies = {movie1, movie2, movie3, movie4, movie5};
+        Mockito.doReturn(mockMovies).when(mockRepository).findAll();
+
+        Movie[] expected = {movie5, movie4, movie3};
+        Movie[] actual = affiche4.findLast();
+
+        Assertions.assertArrayEquals(expected, actual);
     }
 
 }

@@ -1,4 +1,4 @@
-package ru.netology;
+package ru.netology.domain;
 
 public class Movie {
     int id;
